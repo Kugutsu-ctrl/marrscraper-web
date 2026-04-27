@@ -56,7 +56,7 @@
 
 <script>
     const APIFY_TOKEN = 'apify_api_bh194Bh1tqzawXM8HC1p7N7cSOW4G62Df70J';
-    const APIFY_ACTOR = 'compass~crawler-google-places'; // Menggunakan Actor Compass
+    const APIFY_ACTOR = 'compass~crawler-google-places'; 
     let currentData = [];
 
     document.getElementById('scraperForm').addEventListener('submit', async (e) => {
@@ -72,12 +72,12 @@
         tbody.innerHTML = `<tr><td colspan="4" class="p-20 text-center"><div class="w-10 h-10 border-4 border-borderColor border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>Menghubungkan ke Mesin Compass...</td></tr>`;
 
         try {
-            // FORMAT KHUSUS COMPASS
+            // FORMAT ASLI YANG BENAR
             const runRes = await fetch(`https://api.apify.com/v2/acts/${APIFY_ACTOR}/runs?token=${APIFY_TOKEN}`, {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
-                    queries: `${keyword} in ${location}`, 
-                    maxItems: dataLimit, 
+                    searchStringsArray: [`${keyword} in ${location}`], 
+                    maxCrawledPlacesPerSearch: dataLimit, 
                     language: "id" 
                 })
             });
