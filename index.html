@@ -70,11 +70,13 @@
 
 <script>
     const APIFY_TOKEN = 'apify_api_bh194Bh1tqzawXM8HC1p7N7cSOW4G62Df70J';
-    const APIFY_ACTOR = 'rp_openpro.ai~google-maps-scraper';
+    const APIFY_ACTOR = 'rp_openpro.ai~google-maps-scraper'; // SUDAH MENGGUNAKAN "~"
     let currentData = [];
 
     function addLog(text, isError = false) {
         const time = new Date().toLocaleTimeString('it-IT');
+        const termLogs = document.getElementById('termLogs');
+        const linuxTerminal = document.getElementById('linuxTerminal');
         termLogs.innerHTML += `<div class="${isError ? 'text-red-500' : 'text-green-400'}">[${time}] ${text}</div>`;
         linuxTerminal.scrollTop = linuxTerminal.scrollHeight;
     }
@@ -85,7 +87,6 @@
         const location = document.getElementById('location').value;
         const dataLimit = parseInt(document.getElementById('dataLimit').value);
         
-        // PERBAIKAN: Support Enter DAN Koma
         let keywords = rawKeywords.split(/[\n,]+/).map(k => k.trim()).filter(k => k);
         if (keywords.length > 5) keywords = keywords.slice(0, 5);
 
@@ -94,6 +95,12 @@
             return;
         }
 
+        const dataTable = document.getElementById('dataTable');
+        const linuxTerminal = document.getElementById('linuxTerminal');
+        const termLogs = document.getElementById('termLogs');
+        const btnRun = document.getElementById('btnRun');
+        const tableBody = document.getElementById('tableBody');
+
         dataTable.classList.add('hidden');
         linuxTerminal.classList.remove('hidden');
         termLogs.innerHTML = '';
@@ -101,16 +108,18 @@
         btnRun.innerHTML = `<i class="fas fa-spinner fa-spin"></i> RUNNING...`;
 
         try {
-            addLog(`Initializing OpenPro Engine...`);
-            addLog(`Injecting Payload: ${keywords.join(', ')}`);
+            // FORMAT GABUNGAN (Kata Kunci + Lokasi)
+            const queriesArray = keywords.map(k => `${k} in ${location}`);
             
-            // FORMAT KHUSUS UNTUK MESIN OPENPRO (Screenshot 2)
+            addLog(`Initializing OpenPro Engine...`);
+            addLog(`Format injected: ${queriesArray.join(', ')}`);
+            
+            // FORMAT YANG DIWAJIBKAN OLEH MESIN OPENPRO
             const runRes = await fetch(`https://api.apify.com/v2/acts/${APIFY_ACTOR}/runs?token=${APIFY_TOKEN}`, {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    "searchTerms": keywords,
-                    "location": location,
-                    "maxItems": dataLimit,
+                    "searchStringsArray": queriesArray,
+                    "maxCrawledPlacesPerSearch": dataLimit,
                     "extractEmails": true,
                     "extractSocialMedia": true
                 })
@@ -129,7 +138,7 @@
                 const checkRes = await fetch(`https://api.apify.com/v2/actor-runs/${runId}?token=${APIFY_TOKEN}`);
                 const checkData = await checkRes.json();
                 if (checkData.data.status === 'SUCCEEDED') isFinished = true;
-                if (['FAILED','ABORTED'].includes(checkData.data.status)) throw new Error("Execution Failed");
+                if (['FAILED','ABORTED'].includes(checkData.data.status)) throw new Error("Execution Failed or Aborted by Apify");
             }
 
             addLog(`Enrichment complete. Downloading database...`);
@@ -138,15 +147,20 @@
             
             linuxTerminal.classList.add('hidden');
             dataTable.classList.remove('hidden');
-            tableBody.innerHTML = currentData.map(item => `
-                <tr class="border-b border-borderColor hover:bg-white/5">
-                    <td class="px-4 py-3 text-white font-medium">${item.title || item.name || '-'}</td>
-                    <td class="px-4 py-3 text-green-400 font-mono">${item.phone || '-'}</td>
-                    <td class="px-4 py-3 text-xs">
-                        <div class="text-blue-300 mb-1">${item.email || '-'}</div>
-                        <div class="text-gray-500">${item.instagram || item.facebook || ''}</div>
-                    </td>
-                </tr>`).join('');
+            
+            if (currentData.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="3" class="p-10 text-center">Data tidak ditemukan.</td></tr>`;
+            } else {
+                tableBody.innerHTML = currentData.map(item => `
+                    <tr class="border-b border-borderColor hover:bg-white/5">
+                        <td class="px-4 py-3 text-white font-medium">${item.title || item.name || '-'}</td>
+                        <td class="px-4 py-3 text-green-400 font-mono">${item.phone || '-'}</td>
+                        <td class="px-4 py-3 text-xs">
+                            <div class="text-blue-300 mb-1">${item.email || '-'}</div>
+                            <div class="text-gray-500">${item.instagram || item.facebook || ''}</div>
+                        </td>
+                    </tr>`).join('');
+            }
         } catch (error) {
             addLog(`ERROR: ${error.message}`, true);
         } finally {
@@ -157,7 +171,7 @@
 
     function downloadCSV() {
         if (currentData.length === 0) return alert('Kosong!');
-        let csv = "Nama,Telepon,Email,Instagram,Alamat\n" + currentData.map(i => `"${i.title}","${i.phone}","${i.email}","${i.instagram}","${i.address}"`).join("\n");
+        let csv = "Nama,Telepon,Email,Instagram,Alamat\n" + currentData.map(i => `"${i.title || i.name}","${i.phone}","${i.email || ''}","${i.instagram || ''}","${i.address}"`).join("\n");
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
