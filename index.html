@@ -3,18 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=1105, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MarrScraper | Enterprise Cloud</title>
+    <title>MarrScraper | Enterprise Cloud (Engine v3.0)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>tailwind.config = { theme: { extend: { colors: { appBg: '#1a1d24', panelBg: '#252932', inputBg: '#1e222a', borderColor: '#3a404d', brandBlue: '#2563eb', terminal: '#0c0c0c', termText: '#00ff00' } } } }</script>
     <style>
-        body { background-color: #000; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: sans-serif; touch-action: pan-x pan-y; }
+        body { background-color: #000; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: sans-serif; touch-action: none; overflow: hidden; }
         #app-wrapper { width: 1105px !important; height: 780px !important; background-color: #1a1d24; box-shadow: 0 0 30px rgba(0,0,0,0.8); display: flex; flex-direction: column; overflow: hidden; position: relative; }
         ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
-        .layer-icon { position: relative; width: 32px; height: 32px; margin-right: 12px; } .layer-icon div { position: absolute; width: 28px; height: 12px; border-radius: 2px; transform: rotate(-15deg) skewX(30deg); }
-        .layer-top { background: #93c5fd; top: 0; left: 4px; z-index: 3; } .layer-mid { background: #3b82f6; top: 8px; left: 2px; z-index: 2; } .layer-bot { background: #1d4ed8; top: 16px; left: 0; z-index: 1; }
-        
-        /* GAYA TERMINAL LINUX */
         .terminal-container { background-color: #0c0c0c; border: 1px solid #333; padding: 15px; font-family: 'Courier New', Courier, monospace; height: 100%; overflow-y: auto; text-shadow: 0 0 5px rgba(0,255,0,0.5); }
         .blinking-cursor { display: inline-block; width: 8px; height: 15px; background-color: #00ff00; animation: blink 1s step-end infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
@@ -24,46 +20,48 @@
 <div id="app-wrapper" class="text-gray-200">
     <nav class="border-b border-borderColor px-6 py-4 flex justify-between items-center bg-appBg shrink-0">
         <div class="flex items-center">
-            <div class="layer-icon"><div class="layer-top"></div><div class="layer-mid"></div><div class="layer-bot"></div></div>
-            <div class="leading-tight mt-1"><h1 class="text-[22px] font-bold text-white tracking-wide">MarrScraper</h1><p class="text-[13px] text-gray-400">Advanced Engine v2.0</p></div>
+            <div style="position: relative; width: 32px; height: 32px; margin-right: 12px;">
+                <div style="position: absolute; width: 28px; height: 12px; background: #93c5fd; border-radius: 2px; transform: rotate(-15deg) skewX(30deg); top: 0; left: 4px; z-index: 3;"></div>
+                <div style="position: absolute; width: 28px; height: 12px; background: #3b82f6; border-radius: 2px; transform: rotate(-15deg) skewX(30deg); top: 8px; left: 2px; z-index: 2;"></div>
+                <div style="position: absolute; width: 28px; height: 12px; background: #1d4ed8; border-radius: 2px; transform: rotate(-15deg) skewX(30deg); top: 16px; left: 0; z-index: 1;"></div>
+            </div>
+            <div class="leading-tight mt-1"><h1 class="text-[22px] font-bold text-white tracking-wide">MarrScraper</h1><p class="text-[13px] text-gray-400">Enterprise Cloud - OpenPro Engine</p></div>
         </div>
         <div id="systemBadge" class="bg-[#1e222a] border border-borderColor text-gray-300 text-[13px] px-3 py-1.5 rounded-md flex items-center gap-2"><span id="statusText">System Ready</span> <div id="statusDot" class="w-2 h-2 bg-green-500 rounded-full shadow-[0_0_5px_#22c55e]"></div></div>
     </nav>
+
     <main class="flex-grow p-5 grid grid-cols-12 gap-5 w-full h-full overflow-hidden">
-        
         <div class="col-span-4 bg-panelBg rounded-xl p-5 border border-borderColor h-full shadow-xl flex flex-col">
-            <h2 class="text-lg font-bold text-white mb-5 flex items-center shrink-0"><i class="fas fa-terminal text-green-500 mr-3 text-xl"></i> Konsol Ekstraksi</h2>
+            <h2 class="text-lg font-bold text-white mb-5 flex items-center shrink-0"><i class="fas fa-microchip text-blue-400 mr-3 text-xl"></i> Konsol OpenPro</h2>
             <form id="scraperForm" class="space-y-4 flex-grow flex flex-col">
                 <div>
-                    <label class="block text-[13px] font-medium mb-1.5 flex justify-between"><span>Kata Kunci (Maks 5)</span><span class="text-xs text-gray-400">Pisahkan dgn koma</span></label>
-                    <textarea id="keyword" required rows="3" placeholder="Contoh: Toko Baju, Grosir Pakaian, Butik, Penjahit, Konveksi" class="w-full bg-inputBg border border-borderColor rounded-md p-3 outline-none resize-none text-white text-sm"></textarea>
+                    <label class="block text-[13px] font-medium mb-1.5 flex justify-between"><span>Kata Kunci (Maks 5)</span><span class="text-xs text-gray-400">Bisa Enter/Koma</span></label>
+                    <textarea id="keyword" required rows="4" placeholder="Toko Baju&#10;Konter HP&#10;Butik" class="w-full bg-inputBg border border-borderColor rounded-md p-3 outline-none resize-none text-white text-sm"></textarea>
                 </div>
-                <div><label class="block text-[13px] font-medium mb-1.5">Area / Lokasi Target</label><input type="text" id="location" required placeholder="Contoh: Bogor, Jawa Barat" class="w-full bg-inputBg border border-borderColor rounded-md p-3 outline-none text-white text-sm"></div>
+                <div><label class="block text-[13px] font-medium mb-1.5">Lokasi</label><input type="text" id="location" required placeholder="Contoh: Bogor" class="w-full bg-inputBg border border-borderColor rounded-md p-3 outline-none text-white text-sm"></div>
                 <div>
-                    <label class="block text-[13px] font-medium mb-1.5 flex justify-between"><span>Jumlah Data</span><span class="text-[10px] bg-[#12151c] px-2 py-0.5 rounded border border-borderColor text-green-400">1-50 Gratis | >50 WA</span></label>
+                    <label class="block text-[13px] font-medium mb-1.5 flex justify-between"><span>Jumlah Data</span><span class="text-[10px] text-green-400">1-50 Gratis</span></label>
                     <input type="number" id="dataLimit" required min="1" max="999" value="10" class="w-full bg-inputBg border border-borderColor rounded-md p-3 text-white outline-none font-mono text-center text-lg">
                 </div>
-                <button type="submit" id="btnRun" class="w-full bg-green-600 hover:bg-green-500 text-black font-bold py-3 rounded-md transition-all flex justify-center items-center gap-2 shadow-lg mt-auto"><i class="fas fa-play text-sm"></i> EXECUTE SCRIPT</button>
+                <button type="submit" id="btnRun" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-md transition-all flex justify-center items-center gap-2 shadow-lg mt-auto"><i class="fas fa-satellite-dish text-sm"></i> LAUNCH SCRAPER</button>
             </form>
         </div>
 
         <div class="col-span-8 bg-panelBg rounded-xl border border-borderColor shadow-xl flex flex-col h-full overflow-hidden">
             <div class="border-b border-borderColor flex items-end bg-[#1e222a] pt-3 px-2 z-10 shrink-0">
-                <button class="px-6 py-3 border-b-2 border-green-500 text-green-400 font-bold text-[13px]"><i class="fas fa-desktop mr-2"></i> Output Terminal</button>
+                <button class="px-6 py-3 border-b-2 border-blue-500 text-blue-400 font-bold text-[13px]"><i class="fas fa-terminal mr-2"></i> Data & Enrichment</button>
                 <div class="ml-auto pb-2 pr-4"><button onclick="downloadCSV()" class="bg-transparent hover:bg-white/5 border border-borderColor text-gray-300 px-3 py-1.5 rounded-md text-[12px] flex items-center gap-2"><i class="fas fa-download"></i> Export CSV</button></div>
             </div>
-            
             <div id="displayArea" class="overflow-auto flex-grow bg-panelBg relative">
                 <table id="dataTable" class="w-full text-left text-[13px]">
-                    <thead class="bg-panelBg sticky top-0 z-10"><tr class="text-white font-bold border-b border-borderColor"><th class="px-4 py-3">Nama Usaha</th><th class="px-4 py-3">WhatsApp/Telp</th><th class="px-4 py-3">Alamat</th></tr></thead>
+                    <thead class="bg-panelBg sticky top-0 z-10"><tr class="text-white font-bold border-b border-borderColor"><th class="px-4 py-3">Bisnis</th><th class="px-4 py-3">Kontak (WA)</th><th class="px-4 py-3">Email / Sosmed</th></tr></thead>
                     <tbody id="tableBody" class="text-gray-300">
-                        <tr><td colspan="3" class="p-16 text-center text-gray-500 italic"><i class="fas fa-code text-3xl mb-3 block opacity-30"></i>Menunggu eksekusi skrip...</td></tr>
+                        <tr><td colspan="3" class="p-16 text-center text-gray-500">Input data lalu tekan Launch...</td></tr>
                     </tbody>
                 </table>
-
                 <div id="linuxTerminal" class="hidden terminal-container w-full">
                     <div id="termLogs" class="text-termText text-sm leading-relaxed mb-1"></div>
-                    <div class="text-termText text-sm font-bold">root@marrscraper:~# <span class="blinking-cursor"></span></div>
+                    <div class="text-termText text-sm font-bold">marr@openpro:~# <span class="blinking-cursor"></span></div>
                 </div>
             </div>
         </div>
@@ -72,137 +70,99 @@
 
 <script>
     const APIFY_TOKEN = 'apify_api_bh194Bh1tqzawXM8HC1p7N7cSOW4G62Df70J';
-    const APIFY_ACTOR = 'compass~crawler-google-places'; 
+    const APIFY_ACTOR = 'rp_openpro.ai/google-maps-scraper'; 
     let currentData = [];
 
-    const form = document.getElementById('scraperForm');
-    const termLogs = document.getElementById('termLogs');
-    const linuxTerminal = document.getElementById('linuxTerminal');
-    const dataTable = document.getElementById('dataTable');
-    const tableBody = document.getElementById('tableBody');
-    const btn = document.getElementById('btnRun');
-
-    // FUNGSI LOG TERMINAL
     function addLog(text, isError = false) {
         const time = new Date().toLocaleTimeString('it-IT');
-        const colorClass = isError ? 'text-red-500' : 'text-green-400';
-        termLogs.innerHTML += `<div class="${colorClass}">[${time}] ${text}</div>`;
+        termLogs.innerHTML += `<div class="${isError ? 'text-red-500' : 'text-green-400'}">[${time}] ${text}</div>`;
         linuxTerminal.scrollTop = linuxTerminal.scrollHeight;
     }
 
-    form.addEventListener('submit', async (e) => {
+    document.getElementById('scraperForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        
         const rawKeywords = document.getElementById('keyword').value;
         const location = document.getElementById('location').value;
         const dataLimit = parseInt(document.getElementById('dataLimit').value);
         
-        // 1. PISAHKAN KATA KUNCI & CEK MAKSIMAL 5
-        let keywords = rawKeywords.split(',').map(k => k.trim()).filter(k => k);
-        if (keywords.length > 5) {
-            keywords = keywords.slice(0, 5); // Potong jika lebih dari 5
-            alert("Maksimal 5 kata kunci. Hanya 5 pertama yang akan diproses.");
-        }
+        // PERBAIKAN: Support Enter DAN Koma
+        let keywords = rawKeywords.split(/[\n,]+/).map(k => k.trim()).filter(k => k);
+        if (keywords.length > 5) keywords = keywords.slice(0, 5);
 
-        // 2. SISTEM OTOMATIS REDIRECT WA (FITUR PREMIUM)
         if (dataLimit > 50) {
-            const pesan = `Halo admin MarrScraper, saya ingin order ekstraksi Premium.%0A%0A*Detail Order:*%0A- Target Data: ${dataLimit} data%0A- Lokasi: ${location}%0A- Kata Kunci: ${keywords.join(', ')}%0A%0AMohon info cara pembayarannya.`;
-            window.location.href = `https://wa.me/6285813992005?text=${pesan}`;
-            return; // Hentikan script
+            window.location.href = `https://wa.me/6285813992005?text=Halo MarrScraper, saya mau order paket premium ${dataLimit} data untuk lokasi ${location}.`;
+            return;
         }
 
-        // 3. MULAI TAMPILAN TERMINAL
         dataTable.classList.add('hidden');
         linuxTerminal.classList.remove('hidden');
         termLogs.innerHTML = '';
-        btn.disabled = true;
-        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> EXECUTING...`;
-
-        // Format query apify (Array)
-        const queriesArray = keywords.map(k => `${k} in ${location}`);
-
-        addLog(`Initiating Apify Engine v2.0...`);
-        addLog(`Loading ${keywords.length} modules (keywords)...`);
-        queriesArray.forEach(q => addLog(`-> Target injected: "${q}"`));
-        addLog(`Setting max limits to: ${dataLimit}`);
+        btnRun.disabled = true;
+        btnRun.innerHTML = `<i class="fas fa-spinner fa-spin"></i> RUNNING...`;
 
         try {
-            await new Promise(r => setTimeout(r, 800)); // Efek loading ala linux
-            addLog(`Establishing secure connection to Cloud API...`);
+            addLog(`Initializing OpenPro Engine...`);
+            addLog(`Injecting Payload: ${keywords.join(', ')}`);
             
+            // FORMAT KHUSUS UNTUK MESIN OPENPRO (Screenshot 2)
             const runRes = await fetch(`https://api.apify.com/v2/acts/${APIFY_ACTOR}/runs?token=${APIFY_TOKEN}`, {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    searchStringsArray: queriesArray, 
-                    maxCrawledPlacesPerSearch: dataLimit, 
-                    language: "id" 
+                body: JSON.stringify({
+                    "searchTerms": keywords,
+                    "location": location,
+                    "maxItems": dataLimit,
+                    "extractEmails": true,
+                    "extractSocialMedia": true
                 })
             });
+            
             const runData = await runRes.json();
-            if (!runRes.ok) throw new Error(runData.error?.message || "Connection Refused");
+            if (!runRes.ok) throw new Error(runData.error?.message || "Engine Error");
             
             const runId = runData.data.id;
-            addLog(`Connection established. PID assigned: ${runId}`);
-            addLog(`Bypassing Maps restrictions... [OK]`);
-            addLog(`Commencing data extraction protocol...`);
+            addLog(`Thread created: ${runId}`);
 
             let isFinished = false;
-            let dotCount = 0;
-            
             while (!isFinished) {
-                await new Promise(r => setTimeout(r, 4000));
-                
-                // Efek log berjalan
-                const actions = ["Scraping coordinates...", "Decrypting contact info...", "Parsing HTML nodes...", "Bypassing reCAPTCHA...", "Extracting business intel..."];
-                addLog(actions[dotCount % actions.length]);
-                dotCount++;
-
+                await new Promise(r => setTimeout(r, 5000));
+                addLog(`Hunting contact data & enrichment...`);
                 const checkRes = await fetch(`https://api.apify.com/v2/actor-runs/${runId}?token=${APIFY_TOKEN}`);
                 const checkData = await checkRes.json();
-                
                 if (checkData.data.status === 'SUCCEEDED') isFinished = true;
-                if (['FAILED', 'ABORTED', 'TIMED-OUT'].includes(checkData.data.status)) throw new Error(`Process terminated unexpectedly (Code: ${checkData.data.status})`);
+                if (['FAILED','ABORTED'].includes(checkData.data.status)) throw new Error("Execution Failed");
             }
 
-            addLog(`Protocol SUCCEEDED. Fetching dataset from server...`);
+            addLog(`Enrichment complete. Downloading database...`);
             const res = await fetch(`https://api.apify.com/v2/datasets/${runData.data.defaultDatasetId}/items?token=${APIFY_TOKEN}`);
             currentData = await res.json();
             
-            addLog(`Downloaded ${currentData.length} records successfully. Rendering GUI...`);
-            await new Promise(r => setTimeout(r, 1000)); // Beri waktu user membaca log terakhir
-
-            // 4. KEMBALIKAN KE TAMPILAN TABEL
             linuxTerminal.classList.add('hidden');
             dataTable.classList.remove('hidden');
-
-            if (currentData.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="3" class="p-10 text-center">Data tidak ditemukan.</td></tr>`;
-            } else {
-                tableBody.innerHTML = currentData.map(item => `
+            tableBody.innerHTML = currentData.map(item => `
                 <tr class="border-b border-borderColor hover:bg-white/5">
                     <td class="px-4 py-3 text-white font-medium">${item.title || item.name || '-'}</td>
-                    <td class="px-4 py-3 text-green-400 font-mono">${item.phone || item.phoneNumber || '-'}</td>
-                    <td class="px-4 py-3 text-gray-400 text-xs">${item.address || '-'}</td>
+                    <td class="px-4 py-3 text-green-400 font-mono">${item.phone || '-'}</td>
+                    <td class="px-4 py-3 text-xs">
+                        <div class="text-blue-300 mb-1">${item.email || '-'}</div>
+                        <div class="text-gray-500">${item.instagram || item.facebook || ''}</div>
+                    </td>
                 </tr>`).join('');
-            }
         } catch (error) {
-            addLog(`FATAL ERROR: ${error.message}`, true);
+            addLog(`ERROR: ${error.message}`, true);
         } finally {
-            btn.disabled = false;
-            btn.innerHTML = `<i class="fas fa-play"></i> EXECUTE SCRIPT`;
+            btnRun.disabled = false;
+            btnRun.innerHTML = `<i class="fas fa-satellite-dish"></i> LAUNCH SCRAPER`;
         }
     });
 
     function downloadCSV() {
-        if (currentData.length === 0) return alert('Data kosong!');
-        let csv = "Nama Usaha,WhatsApp,Alamat\n" + currentData.map(i => `"${i.title || i.name}","${i.phone || i.phoneNumber}","${i.address}"`).join("\n");
+        if (currentData.length === 0) return alert('Kosong!');
+        let csv = "Nama,Telepon,Email,Instagram,Alamat\n" + currentData.map(i => `"${i.title}","${i.phone}","${i.email}","${i.instagram}","${i.address}"`).join("\n");
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        link.setAttribute("download", "MarrScraper_Data.csv");
-        document.body.appendChild(link);
+        link.setAttribute("download", "MarrScraper_Premium.csv");
         link.click();
-        document.body.removeChild(link);
     }
 </script>
 </body>
