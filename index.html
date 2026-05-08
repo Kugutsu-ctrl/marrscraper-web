@@ -40,7 +40,7 @@
                 </div>
                 <div><label class="block text-[13px] font-medium mb-1.5">Lokasi</label><input type="text" id="location" required placeholder="Contoh: Bogor" class="w-full bg-inputBg border border-borderColor rounded-md p-3 outline-none text-white text-sm"></div>
                 <div>
-                    <label class="block text-[13px] font-medium mb-1.5 flex justify-between"><span>Jumlah Data</span><span class="text-[10px] text-green-400">1-50 Gratis</span></label>
+                    <label class="block text-[13px] font-medium mb-1.5 flex justify-between"><span>Jumlah Data</span><span class="text-[10px] text-green-400">1-10 Gratis</span></label>
                     <input type="number" id="dataLimit" required min="1" max="999" value="10" class="w-full bg-inputBg border border-borderColor rounded-md p-3 text-white outline-none font-mono text-center text-lg">
                 </div>
                 <button type="submit" id="btnRun" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-md transition-all flex justify-center items-center gap-2 shadow-lg mt-auto"><i class="fas fa-satellite-dish text-sm"></i> LAUNCH SCRAPER</button>
@@ -69,8 +69,10 @@
 </div>
 
 <script>
-    const APIFY_TOKEN = 'apify_api_bh194Bh1tqzawXM8HC1p7N7cSOW4G62Df70J';
-    const APIFY_ACTOR = 'rp_openpro.ai~google-maps-scraper'; // SUDAH MENGGUNAKAN "~"
+    // --- KONFIGURASI API & PASSWORD ---
+    const APIFY_TOKEN = 'apify_api_6vvG1QCsrGMGVL7ksSHPneRHIO8aFS3cyBiB';
+    const PREMIUM_PASSWORD = 'Amar2002'; // <--- Ganti password ini sesuai keinginan Anda
+    const APIFY_ACTOR = 'rp_openpro.ai~google-maps-scraper'; 
     let currentData = [];
 
     function addLog(text, isError = false) {
@@ -90,9 +92,14 @@
         let keywords = rawKeywords.split(/[\n,]+/).map(k => k.trim()).filter(k => k);
         if (keywords.length > 5) keywords = keywords.slice(0, 5);
 
-        if (dataLimit > 50) {
-            window.location.href = `https://wa.me/6285813992005?text=Halo MarrScraper, saya mau order paket premium ${dataLimit} data untuk lokasi ${location}.`;
-            return;
+        // --- LOGIKA LIMIT & PASSWORD BARU ---
+        if (dataLimit > 10) {
+            const inputPwd = prompt(`Peringatan: Limit data gratis maksimal 10!\n\nAnda meminta ${dataLimit} data. Masukkan password akses premium untuk melanjutkan (minta password ke admin):`);
+            
+            if (inputPwd !== PREMIUM_PASSWORD) {
+                alert("Akses Ditolak! Password salah atau kosong.");
+                return; // Hentikan proses jika password salah
+            }
         }
 
         const dataTable = document.getElementById('dataTable');
@@ -108,13 +115,11 @@
         btnRun.innerHTML = `<i class="fas fa-spinner fa-spin"></i> RUNNING...`;
 
         try {
-            // FORMAT GABUNGAN (Kata Kunci + Lokasi)
             const queriesArray = keywords.map(k => `${k} in ${location}`);
             
             addLog(`Initializing OpenPro Engine...`);
             addLog(`Format injected: ${queriesArray.join(', ')}`);
             
-            // FORMAT YANG DIWAJIBKAN OLEH MESIN OPENPRO
             const runRes = await fetch(`https://api.apify.com/v2/acts/${APIFY_ACTOR}/runs?token=${APIFY_TOKEN}`, {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
